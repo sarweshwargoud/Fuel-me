@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+/* ============================================
+   Buy Me a Coffee — Design System
+   ============================================ */
+
+@theme {
+  /* Coffee-inspired warm color palette */
+  --color-primary-50: #FFF8F1;
+  --color-primary-100: #FEECDC;
+  --color-primary-200: #FCD9BD;
+  --color-primary-300: #FDBA8C;
+  --color-primary-400: #FF8A4C;
+  --color-primary-500: #FF6B18;
+  --color-primary-600: #E8590C;
+  --color-primary-700: #B8420A;
+  --color-primary-800: #8A3009;
+  --color-primary-900: #6C2507;
+
+  /* Warm neutrals */
+  --color-warm-50: #FDFAF6;
+  --color-warm-100: #F9F3EB;
+  --color-warm-200: #F0E4D4;
+  --color-warm-300: #DCC9AD;
+  --color-warm-400: #C4A882;
+  --color-warm-500: #A78B62;
+  --color-warm-600: #8B7050;
+  --color-warm-700: #6E5840;
+  --color-warm-800: #534230;
+  --color-warm-900: #3D3024;
+
+  /* Accent */
+  --color-accent: #FBBF24;
+  --color-accent-light: #FDE68A;
+
+  /* Text */
+  --color-text-primary: #1C1917;
+  --color-text-secondary: #57534E;
+  --color-text-muted: #A8A29E;
+
+  /* Background */
+  --color-bg-page: #FFFBF5;
+  --color-bg-card: #FFFFFF;
+
+  /* Fonts */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Base styles */
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg-page);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-warm-300);
+  border-radius: 3px;
+}
+
+/* Focus ring utility */
+*:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+/* Selection color */
+::selection {
+  background-color: var(--color-primary-200);
+  color: var(--color-primary-900);
+}
