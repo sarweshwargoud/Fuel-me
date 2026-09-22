@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { AmountSelector } from './AmountSelector';
 import { SupporterForm } from './SupporterForm';
 import { PaymentButton } from './PaymentButton';
+import { UpiQrView } from './UpiQrView';
 import { useRazorpay } from '../hooks/useRazorpay';
-import { AlertCircle, X } from 'lucide-react';
+import { AlertCircle, X, CreditCard, QrCode } from 'lucide-react';
 
 export function DonationCard() {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(50);
@@ -12,6 +13,7 @@ export function DonationCard() {
   const [message, setMessage] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'upi'>('razorpay');
 
   const { initiatePayment, paymentState, errorMessage, resetState } = useRazorpay();
 
@@ -91,6 +93,7 @@ export function DonationCard() {
           </div>
         )}
 
+        {/* Amount Selector */}
         <AmountSelector
           selectedAmount={selectedAmount}
           customAmount={customAmount}
@@ -99,22 +102,65 @@ export function DonationCard() {
           validationError={validationError}
         />
 
+        {/* Payment Method Selector Tab */}
+        <div>
+          <label className="block text-xs font-semibold uppercase tracking-wider text-text-muted mb-2">
+            Choose Payment Method
+          </label>
+          <div className="grid grid-cols-2 gap-2 p-1.5 bg-warm-100/80 rounded-2xl border border-warm-200">
+            <button
+              type="button"
+              onClick={() => setPaymentMethod('razorpay')}
+              className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                paymentMethod === 'razorpay'
+                  ? 'bg-white text-primary-600 shadow-sm'
+                  : 'text-text-secondary hover:text-text-primary'
+              }`}
+            >
+              <CreditCard className="w-4 h-4" />
+              <span>Razorpay</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setPaymentMethod('upi')}
+              className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                paymentMethod === 'upi'
+                  ? 'bg-white text-purple-700 shadow-sm'
+                  : 'text-text-secondary hover:text-text-primary'
+              }`}
+            >
+              <QrCode className="w-4 h-4" />
+              <span>UPI QR Code</span>
+            </button>
+          </div>
+        </div>
+
         <div className="border-t border-warm-100" />
 
-        <SupporterForm
-          name={name}
-          message={message}
-          isAnonymous={isAnonymous}
-          onNameChange={setName}
-          onMessageChange={setMessage}
-          onAnonymousChange={setIsAnonymous}
-        />
+        {/* Method 1: Razorpay Checkout */}
+        {paymentMethod === 'razorpay' && (
+          <div className="space-y-6 animate-fade-in">
+            <SupporterForm
+              name={name}
+              message={message}
+              isAnonymous={isAnonymous}
+              onNameChange={setName}
+              onMessageChange={setMessage}
+              onAnonymousChange={setIsAnonymous}
+            />
 
-        <PaymentButton
-          amount={effectiveAmount}
-          paymentState={paymentState}
-          onClick={validateAndPay}
-        />
+            <PaymentButton
+              amount={effectiveAmount}
+              paymentState={paymentState}
+              onClick={validateAndPay}
+            />
+          </div>
+        )}
+
+        {/* Method 2: UPI QR Code */}
+        {paymentMethod === 'upi' && (
+          <UpiQrView amount={effectiveAmount} />
+        )}
       </div>
     </section>
   );
