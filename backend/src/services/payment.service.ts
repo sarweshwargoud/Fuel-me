@@ -3,6 +3,27 @@ import { supabase } from '../config/supabase';
 import { env } from '../config/env';
 import { memoryDonations, DonationRecord } from './store';
 
+export interface RazorpayOrderError {
+  code?: string;
+  description?: string;
+  source?: string;
+  step?: string;
+  reason?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface RazorpayOrderResponse {
+  id: string;
+  entity?: string;
+  amount: number;
+  amount_paid?: number;
+  amount_due?: number;
+  currency: string;
+  receipt?: string;
+  status?: string;
+  error?: RazorpayOrderError;
+}
+
 export interface CreateOrderParams {
   amount: number; // in paise
   currency?: string;
@@ -55,17 +76,22 @@ export async function createOrder(params: CreateOrderParams): Promise<CreateOrde
     }),
   });
 
-  const orderData = await response.json();
+  const orderData = (await response.json()) as RazorpayOrderResponse;
 
   if (!response.ok) {
     if (response.status === 401) {
-      const err = new Error('Razorpay authentication failed');
-      (err as any).statusCode = 401;
+      const err = Object.assign(new Error('Razorpay authentication failed'), {
+        statusCode: 401,
+      });
       throw err;
     }
-    const err = new Error(orderData?.error?.description || 'Razorpay order creation failed');
-    (err as any).statusCode = response.status;
-    (err as any).error = orderData?.error;
+    const err = Object.assign(
+      new Error(orderData?.error?.description || 'Razorpay order creation failed'),
+      {
+        statusCode: response.status,
+        error: orderData?.error,
+      }
+    );
     throw err;
   }
 
