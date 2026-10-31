@@ -12,7 +12,7 @@ const PAYEE_NAME = 'Buddolla Sarweshwar';
 
 export function UpiQrView({ amount, name, message }: UpiQrViewProps) {
   const [copied, setCopied] = useState(false);
-  const [showQr, setShowQr] = useState(false);
+  const [showQr, setShowQr] = useState(true);
 
   function copyUpiId() {
     navigator.clipboard.writeText(UPI_ID);
@@ -31,8 +31,8 @@ export function UpiQrView({ amount, name, message }: UpiQrViewProps) {
   )}${amount ? `&am=${amount}` : ''}&cu=INR&tn=${encodeURIComponent(note)}`;
 
   return (
-    <div className="space-y-4 animate-fade-in">
-      {/* Two action buttons: Copy UPI ID & Show QR Code */}
+    <div className="space-y-4 animate-fade-in pt-1">
+      {/* Top action buttons: Copy UPI ID & Show/Hide QR (on top of button) */}
       <div className="grid grid-cols-2 gap-3">
         {/* Button 1: Copy UPI ID */}
         <button
@@ -57,7 +57,7 @@ export function UpiQrView({ amount, name, message }: UpiQrViewProps) {
           )}
         </button>
 
-        {/* Button 2: Show QR Code */}
+        {/* Button 2: Show / Hide QR */}
         <button
           type="button"
           onClick={() => setShowQr((prev) => !prev)}
@@ -68,16 +68,8 @@ export function UpiQrView({ amount, name, message }: UpiQrViewProps) {
           }`}
         >
           <QrCode className="w-4 h-4 shrink-0" />
-          <span>{showQr ? 'Hide QR Code' : 'Show QR Code'}</span>
+          <span>{showQr ? 'Hide QR' : 'Show QR'}</span>
         </button>
-      </div>
-
-      {/* UPI ID preview tag */}
-      <div className="flex items-center justify-center gap-1.5 text-xs text-text-muted">
-        <span>UPI ID:</span>
-        <code className="font-mono font-semibold text-text-secondary bg-warm-100 px-2 py-0.5 rounded border border-warm-200">
-          {UPI_ID}
-        </code>
       </div>
 
       {/* Copied feedback banner */}
@@ -88,48 +80,63 @@ export function UpiQrView({ amount, name, message }: UpiQrViewProps) {
         </div>
       )}
 
-      {/* QR Code Container (shown only when showQr is true) */}
+      {/* QR Code Container on top of button (shown when showQr is true) */}
       {showQr && (
-        <div className="space-y-4 animate-fade-in">
-          <div className="relative mx-auto max-w-[280px] bg-white rounded-2xl p-4 shadow-md border border-warm-200 flex flex-col items-center">
-            {/* PhonePe & UPI Badge */}
-            <div className="flex items-center gap-2 mb-2 px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-semibold">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Scan with Any UPI App</span>
-            </div>
-
-            {/* QR Image */}
-            <div className="w-full aspect-square overflow-hidden rounded-xl bg-white border border-warm-100 flex items-center justify-center p-1">
-              <img
-                src="/upi-qr.jpg"
-                alt="PhonePe UPI QR Code for Buddolla Sarweshwar"
-                className="w-full h-full object-contain"
-              />
-            </div>
-
-            {/* Payee Info */}
-            <div className="mt-3 text-center w-full">
-              <p className="text-xs text-text-muted">Payee Name</p>
-              <p className="font-bold text-text-primary text-sm tracking-tight">{PAYEE_NAME}</p>
-              {amount && (
-                <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-primary-100 text-primary-700 text-xs font-bold">
-                  <span>Amount: ₹{amount}</span>
-                </div>
-              )}
-            </div>
+        <div className="relative mx-auto max-w-[280px] bg-white rounded-2xl p-4 shadow-md border border-warm-200 flex flex-col items-center animate-fade-in">
+          {/* PhonePe & UPI Badge */}
+          <div className="flex items-center gap-2 mb-2 px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-semibold">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Scan with Any UPI App</span>
           </div>
 
-          {/* Mobile Direct Pay Button */}
-          <a
-            href={upiDeepLink}
-            className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white font-semibold text-sm shadow-md shadow-purple-600/20 transition-all cursor-pointer"
+          {/* QR Image */}
+          <div className="w-full aspect-square overflow-hidden rounded-xl bg-white border border-warm-100 flex items-center justify-center p-1">
+            <img
+              src="/upi-qr.jpg"
+              alt="PhonePe UPI QR Code for Buddolla Sarweshwar"
+              className="w-full h-full object-contain"
+            />
+          </div>
+
+          {/* Payee Info */}
+          <div className="mt-3 text-center w-full">
+            <p className="text-xs text-text-muted">Payee Name</p>
+            <p className="font-bold text-text-primary text-sm tracking-tight">{PAYEE_NAME}</p>
+            {amount && (
+              <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-primary-100 text-primary-700 text-xs font-bold">
+                <span>Amount: ₹{amount}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Tap to copy UPI ID pill */}
+          <div
+            onClick={copyUpiId}
+            className="w-full flex items-center justify-between p-2 rounded-xl bg-warm-50 border border-warm-200 mt-3 cursor-pointer hover:bg-warm-100/80 active:scale-[0.99] transition-all"
+            title="Click to copy UPI ID"
           >
-            <Smartphone className="w-4 h-4" />
-            <span>Pay via UPI App {amount ? `(₹${amount})` : ''}</span>
-            <ExternalLink className="w-3.5 h-3.5 opacity-80" />
-          </a>
+            <div className="text-left min-w-0 pr-2">
+              <p className="text-[10px] uppercase font-semibold text-text-muted">UPI ID</p>
+              <code className="font-mono text-xs font-bold text-text-primary truncate block">
+                {UPI_ID}
+              </code>
+            </div>
+            <span className="text-[11px] font-semibold text-primary-600">
+              {copied ? 'Copied!' : 'Copy'}
+            </span>
+          </div>
         </div>
       )}
+
+      {/* The main Pay via UPI Button at the bottom */}
+      <a
+        href={upiDeepLink}
+        className="w-full py-4 px-6 rounded-2xl text-base font-bold flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white shadow-lg shadow-purple-600/20 transition-all cursor-pointer"
+      >
+        <Smartphone className="w-5 h-5" />
+        <span>Pay via UPI App{amount ? ` (₹${amount})` : ''}</span>
+        <ExternalLink className="w-4 h-4 opacity-80" />
+      </a>
 
       {/* Accepted apps badges */}
       <div className="text-center pt-1">
