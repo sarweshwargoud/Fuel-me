@@ -12,7 +12,7 @@ const PAYEE_NAME = 'Buddolla Sarweshwar';
 
 export function UpiQrView({ amount, name, message }: UpiQrViewProps) {
   const [copied, setCopied] = useState(false);
-  const [showQr, setShowQr] = useState(true);
+  const [showQr, setShowQr] = useState(false);
 
   function copyUpiId() {
     navigator.clipboard.writeText(UPI_ID);
@@ -80,6 +80,14 @@ export function UpiQrView({ amount, name, message }: UpiQrViewProps) {
         </div>
       )}
 
+      {/* UPI ID preview (always visible even when QR code is hidden) */}
+      <div className="flex items-center justify-center gap-1.5 text-xs text-text-muted">
+        <span>UPI ID:</span>
+        <code className="font-mono font-semibold text-text-secondary bg-warm-100 px-2.5 py-0.5 rounded-lg border border-warm-200">
+          {UPI_ID}
+        </code>
+      </div>
+
       {/* QR Code Container on top of button (shown when showQr is true) */}
       {showQr && (
         <div className="relative mx-auto max-w-[280px] bg-white rounded-2xl p-4 shadow-md border border-warm-200 flex flex-col items-center animate-fade-in">
@@ -128,13 +136,13 @@ export function UpiQrView({ amount, name, message }: UpiQrViewProps) {
         </div>
       )}
 
-      {/* The main Pay via UPI Button at the bottom */}
+      {/* The main Pay with UPI Button at the bottom (ALWAYS visible even if QR is hidden) */}
       <a
         href={upiDeepLink}
         className="w-full py-4 px-6 rounded-2xl text-base font-bold flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white shadow-lg shadow-purple-600/20 transition-all cursor-pointer"
       >
         <Smartphone className="w-5 h-5" />
-        <span>Pay via UPI App{amount ? ` (₹${amount})` : ''}</span>
+        <span>Pay with UPI App{amount ? ` (₹${amount})` : ''}</span>
         <ExternalLink className="w-4 h-4 opacity-80" />
       </a>
 
